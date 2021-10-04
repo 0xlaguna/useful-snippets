@@ -1,7 +1,9 @@
 # Snippets
 ## _I store here useful snippets that im probably going to forget_
  ---
+ 
 ## Kafka Docker
+
  - Kafka,schema-registry,zookeper,debezium
 ```yml
 ---
@@ -86,6 +88,7 @@ services:
     environment:
       KAFKA_CONNECT_URI: http://kafka-connect:8083
 ```
+
 ## SQL Server
 
 - Enable cdc on table
@@ -98,6 +101,7 @@ EXECUTE sys.sp_cdc_enable_table
     @supports_net_changes = 1,
    	@role_name = N'cdc_admin';
 ```
+
 - List all cdc active tables
 ```sql
 USE TestDb;
