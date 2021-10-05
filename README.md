@@ -91,6 +91,14 @@ services:
 
 ## SQL Server
 
+- Enable cdc on db
+```sql
+USE DbTest;  
+GO  
+EXECUTE sys.sp_cdc_enable_db;  
+GO
+```
+
 - Enable cdc on table
 ```sql
 USE Rhdb;
