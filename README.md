@@ -117,3 +117,17 @@ FROM sys.tables tb
 INNER JOIN sys.schemas s on s.schema_id = tb.schema_id
 WHERE tb.is_tracked_by_cdc = 1
 ```
+
+- Drop all database connections
+```sql
+DECLARE @DatabaseName nvarchar(50)
+SET @DatabaseName = N'Db'
+
+DECLARE @SQL varchar(max)
+
+SELECT @SQL = COALESCE(@SQL,'') + 'Kill ' + Convert(varchar, SPId) + ';'
+FROM MASTER..SysProcesses
+WHERE DBId = DB_ID(@DatabaseName) AND SPId <> @@SPId
+
+EXEC(@SQL)
+```
