@@ -54,7 +54,7 @@ services:
       - 8083:8083
     environment:
       CONNECT_BOOTSTRAP_SERVERS: "broker:29092"
-      REST_PORT: "8083"
+      CONNECT_REST_PORT: "8083"
       CONNECT_GROUP_ID: kafka-connect
       CONNECT_CONFIG_STORAGE_TOPIC: _connect-configs
       CONNECT_OFFSET_STORAGE_TOPIC: _connect-offsets
@@ -70,13 +70,14 @@ services:
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: "1"
     # -----------------------
       CONNECT_PLUGIN_PATH: /usr/share/java,/usr/share/confluent-hub-components,/data/connect-jars
-      command: >
-        sh -c " echo 'Installing Connector' &&
-                confluent-hub install --no-prompt debezium/debezium-connector-sqlserver:1.6.0 &&
-                confluent-hub install --no-prompt confluentinc/kafka-connect-elasticsearch:11.1.2 &&
-                confluent-hub install --no-prompt neo4j/kafka-connect-neo4j:1.0.9 &&
-                echo 'Launching Kafka Connect worker' &&
-                /etc/confluent/docker/run && sleep infinity " 
+    command: >
+      sh -c " echo 'Installing Connector' &&
+              confluent-hub install --no-prompt debezium/debezium-connector-sqlserver:1.6.0 &&
+              confluent-hub install --no-prompt confluentinc/kafka-connect-elasticsearch:11.1.2 &&
+              confluent-hub install --no-prompt neo4j/kafka-connect-neo4j:1.0.9 &&
+              echo 'Launching Kafka Connect worker' &&
+              /etc/confluent/docker/run &&
+              sleep infinity"
   
   debezium-ui:
     image: debezium/debezium-ui:1.7
