@@ -68,16 +68,52 @@ services:
       CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: "1"
       CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: "1"
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: "1"
-    # -----------------------
       CONNECT_PLUGIN_PATH: /usr/share/java,/usr/share/confluent-hub-components,/data/connect-jars
-    command: >
-      sh -c " echo 'Installing Connector' &&
-              confluent-hub install --no-prompt debezium/debezium-connector-sqlserver:1.6.0 &&
-              confluent-hub install --no-prompt confluentinc/kafka-connect-elasticsearch:11.1.2 &&
-              confluent-hub install --no-prompt neo4j/kafka-connect-neo4j:1.0.9 &&
-              echo 'Launching Kafka Connect worker' &&
-              /etc/confluent/docker/run &&
-              sleep infinity"
+    command:
+      - bash 
+      - -c 
+      - |
+        #
+        echo "Installing connector plugins"
+        confluent-hub install --no-prompt debezium/debezium-connector-sqlserver:1.6.0
+        confluent-hub install --no-prompt debezium/debezium-connector-sqlserver:1.6.0
+        confluent-hub install --no-prompt confluentinc/kafka-connect-elasticsearch:11.1.2
+        confluent-hub install --no-prompt neo4j/kafka-connect-neo4j:1.0.9
+        
+        #
+        echo "Launching Kafka Connect worker"
+        /etc/confluent/docker/run & 
+
+        #
+        echo "Waiting for Kafka Connect to start listening on localhost"
+        while : ; do
+          curl_status=$$(curl -s -o /dev/null -w %{http_code} http://localhost:8083/connectors)
+          echo -e $$(date) " Kafka Connect listener HTTP state: " $$curl_status " (waiting for 200)"
+          if [ $$curl_status -eq 200 ] ; then
+            break
+          fi
+          sleep 5 
+        done
+
+        echo -e "\n--\n+> Creating connector"
+        curl -s -X POST -H "Accept:application/json" -H "Content-Type:application/json" http://localhost:8083/connectors/ \
+            -d '{
+                "name": "test-connector",
+                "config": {
+                  "connector.class": "io.debezium.connector.sqlserver.SqlServerConnector",
+                  "tasks.max": "1",
+                  "database.hostname": "127.0.0.1",
+                  "database.port": "1433", 
+                  "database.user": "sa", 
+                  "database.password": "password", 
+                  "database.dbname": "TestDb", 
+                  "database.server.name": "TESTSERVER", 
+                  "table.include.list": "system.user", 
+                  "database.history.kafka.bootstrap.servers": "broker:29092",
+                  "database.history.kafka.topic": "schema-changes.testdb"
+                }
+            }'
+        sleep infinity
   
   debezium-ui:
     image: debezium/debezium-ui:1.7
