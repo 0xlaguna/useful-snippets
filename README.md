@@ -176,3 +176,37 @@ WHERE DBId = DB_ID(@DatabaseName) AND SPId <> @@SPId
 
 EXEC(@SQL)
 ```
+
+- Add linkedServer
+```sql
+EXEC sp_addlinkedserver 
+    @server=N'testserver', 
+    @srvproduct=N'', 
+    @provider=N'SQLNCLI', 
+    @datasrc=N'192.168.1.10',
+    @catalog='testdb';
+```
+- Add linked server login
+```sql
+EXEC sp_addlinkedsrvlogin 
+    @rmtsrvname=N'testserver', 
+    @useself=N'FALSE', 
+    @locallogin=NULL, 
+    @rmtuser=N'sa', 
+    @rmtpassword=N'password1';
+```
+
+- Test linked server
+```sql
+EXEC sp_testlinkedserver testserver;
+```
+
+- List linked servers
+```sql
+EXEC sp_linkedservers;
+```
+
+- Drop linked server and its logins
+```sql
+EXEC sp_dropserver 'testserver', 'droplogins';
+```
