@@ -235,3 +235,11 @@ EXEC sp_linkedservers;
 ```sql
 EXEC sp_dropserver 'testserver', 'droplogins';
 ```
+
+- Drop linked server and its logins
+```sql
+SELECT 
+    SUM([rows])
+FROM sys.partitions
+WHERE object_id=object_id('Operaciones.RuteoDetalle') AND index_id in (0,1);
+```
