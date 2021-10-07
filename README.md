@@ -124,6 +124,31 @@ services:
       - 8080:8080
     environment:
       KAFKA_CONNECT_URI: http://kafka-connect:8083
+      
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - 9060:8080
+    depends_on:
+      - broker
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: broker:29092
+      
+  apache-pinot:
+    container_name: pinot
+    image: apachepinot/pinot:0.8.0
+    depends_on:
+      - broker
+      - zookeeper
+      - kafka-connect
+    links:
+      - zookeeper
+      - broker
+    ports:
+      - 9050:9000
+    command: QuickStart -type stream
 ```
 
 ## SQL Server
