@@ -236,7 +236,7 @@ EXEC sp_linkedservers;
 EXEC sp_dropserver 'testserver', 'droplogins';
 ```
 
-- Drop linked server and its logins
+- Count rows
 ```sql
 SELECT 
     SUM([rows])
