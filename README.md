@@ -241,5 +241,5 @@ EXEC sp_dropserver 'testserver', 'droplogins';
 SELECT 
     SUM([rows])
 FROM sys.partitions
-WHERE object_id=object_id('Operaciones.RuteoDetalle') AND index_id in (0,1);
+WHERE object_id=object_id('Location.IdkTable') AND index_id in (0,1);
 ```
