@@ -243,3 +243,10 @@ SELECT
 FROM sys.partitions
 WHERE object_id=object_id('Location.IdkTable') AND index_id in (0,1);
 ```
+- Select by target date
+```sql
+DECLARE @TargetDate DATETIME = '2021-09-29 07:18:24.157';
+
+SELECT * FROM User U
+WHERE U.DateCreated >= @TargetDate AND U.DateCreated < DATEADD(DAY, 1, @TargetDate);
+```
